@@ -1,9 +1,11 @@
 #include <public.h>
 #include <private.h>
+#include <interface.h>
 #include <stdio.h>
 
 void demo_public(void);
 void demo_private(void);
+void demo_interface(void);
 
 void demo_public(void)
 {
@@ -65,10 +67,46 @@ void demo_private(void)
     printf("\n");
 }
 
+void demo_interface(void)
+{
+    Interface_object interface1;
+    Object_public object1;
+
+    Interface_object *interface2;
+    Object_public *object2;
+    int data = 41;
+
+    printf("Demo Interface\n");
+
+    object_public_init(&object1, &data, sizeof(data));
+    interface_object_init(&interface1,
+                          &object1,
+                          object_public_get_size_interface_wrapper,
+                          object_public_get_object_interface_wrapper,
+                          object_public_deinit_interface_warpper,
+                          NULL); /* object is allocated on stack */
+
+    printf("Interface1->size=%zu,data=%d\n", interface_object_get_size(&interface1), *(int *)interface_object_get_object(&interface1));
+
+    interface_object_deinit(&interface1);
+
+    object2 = object_public_create(&data, sizeof(data));
+    interface2 = interface_object_create(object2,
+                                         object_public_get_size_interface_wrapper,
+                                         object_public_get_object_interface_wrapper,
+                                         object_public_deinit_interface_warpper,
+                                         object_public_destroy_interface_wrapper); /* Object allocated on heap */
+
+    printf("Interface2->size=%zu,data=%d\n", interface_object_get_size(interface2), *(int *)interface_object_get_object(interface2));
+
+    interface_object_destroy(interface2);
+    printf("\n");
+}
 
 int main(void)
 {
     demo_public();
     demo_private();
+    demo_interface();
     return 0;
 }
