@@ -92,4 +92,7 @@ static inline void* interface_object_get_object(Interface_object* iobject)
 /* This is not part of interface but part of object_public, but to keep demo consistency I put this code here */
 INTERFACE_OBJECT_WRAPPERS_CREATE(Object_public, object_public)
 
+/* This is not part of interface but part of object_private, but to keep demo consistency I put this code here */
+INTERFACE_OBJECT_WRAPPERS_CREATE(Object_private, object_private)
+
 #endif

@@ -1,11 +1,14 @@
 #include <public.h>
 #include <private.h>
 #include <interface.h>
+#include <polymorphism.h>
+
 #include <stdio.h>
 
 void demo_public(void);
 void demo_private(void);
 void demo_interface(void);
+void demo_polymorphism(void);
 
 void demo_public(void)
 {
@@ -103,10 +106,35 @@ void demo_interface(void)
     printf("\n");
 }
 
+void demo_polymorphism(void)
+{
+    Interface_object* interface;
+    int data = 41;
+
+    printf("Demo Polymorphism\n");
+
+    interface = interface_object_create_object_public(&data, sizeof(data));
+    printf("Interface(Public)->size=%zu,data=%d\n", interface_object_get_size(interface), *(int *)interface_object_get_object(interface));
+
+    interface_object_destroy(interface);
+
+    data = 17;
+    printf("Data has been changed to 17\n");
+
+    interface = interface_object_create_object_private(&data, sizeof(data));
+    printf("Interface(Private)->size=%zu,data=%d\n", interface_object_get_size(interface), *(int *)interface_object_get_object(interface));
+
+    interface_object_destroy(interface);
+
+    printf("\n");
+}
+
 int main(void)
 {
     demo_public();
     demo_private();
     demo_interface();
+    demo_polymorphism();
+
     return 0;
 }
