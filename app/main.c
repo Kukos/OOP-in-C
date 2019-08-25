@@ -1,7 +1,9 @@
 #include <public.h>
+#include <private.h>
 #include <stdio.h>
 
 void demo_public(void);
+void demo_private(void);
 
 void demo_public(void)
 {
@@ -35,8 +37,38 @@ void demo_public(void)
     printf("\n");
 }
 
+void demo_private(void)
+{
+    Object_private *object1;
+
+    /* Object is public so it can't be allocated on stack */
+    /* Object_private object2; */
+
+    int data = 41;
+
+    printf("Demo Private\n\n");
+    object1 = object_private_create(&data, sizeof(data));
+
+    /* Object is private, so we have not direct access to fields */
+    /* size_t size = object1->size */
+    printf("OBJ1->size=%zu,data=%d\n", object_private_get_size(object1), *(int *)object_private_get_object(object1));
+
+    /* Nothing is changing in objects, there have own copy of data */
+    data = 17;
+    printf("Data has been changed to:%d\n", data);
+
+    printf("OBJ1->size=%zu,data=%d\n", object_private_get_size(object1), *(int *)object_private_get_object(object1));
+
+    /* <class>_create alloc memory on heap, so we need to call <class>_destroy */
+    object_private_destroy(object1);
+
+    printf("\n");
+}
+
+
 int main(void)
 {
     demo_public();
+    demo_private();
     return 0;
 }
