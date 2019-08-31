@@ -5,8 +5,10 @@
 #include <singleton.h>
 #include <object_alloca.h>
 #include <kiss.h>
+#include <array.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define COLOR_RESET  "\033[0m"
 #define COLOR_RED    "\033[31m"
@@ -26,6 +28,7 @@
         else \
         { \
             fprintf(stderr, COLOR_RED "FAILED:" COLOR_RESET "%s\n", TO_STRING(expr)); \
+            exit(1); \
         } \
     } while (0)
 
@@ -35,6 +38,7 @@ void demo_interface(void);
 void demo_polymorphism(void);
 void demo_singleton(void);
 void demo_object_alloca(void);
+void demo_iterators(void);
 void demo_kiss(void);
 
 void demo_public(void)
@@ -192,6 +196,79 @@ void demo_object_alloca(void)
     printf("\n");
 }
 
+void demo_iterators(void)
+{
+    int t[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    printf("Demo Iterators\n");
+
+    Array* a = array_create(ARRAY_SIZE(t));
+    for (size_t i = 0; i < ARRAY_SIZE(t); ++i)
+        array_set(a, i, t[i]);
+
+    Array_iterator* it;
+    int *node;
+    int val;
+    size_t i = 0;
+
+    FOR_EACH(it, a, Array, node, val)
+    {
+        TEST(*node == t[i]);
+        TEST(val == t[i]);
+        ++i;
+    }
+    TEST(i == ARRAY_SIZE(t));
+    array_iterator_destroy(it);
+
+    i = 0;
+    FOR_EACH_NODE(it, a, Array, node)
+    {
+        TEST(*node == t[i]);
+        ++i;
+    }
+    TEST(i == ARRAY_SIZE(t));
+    array_iterator_destroy(it);
+
+    i = 0;
+    FOR_EACH_DATA(it, a, Array, val)
+    {
+        TEST(val == t[i]);
+        ++i;
+    }
+    TEST(i == ARRAY_SIZE(t));
+    array_iterator_destroy(it);
+
+    i = ARRAY_SIZE(t) - 1;
+    FOR_EACH_REV(it, a, Array, node, val)
+    {
+        TEST(*node == t[i]);
+        TEST(val == t[i]);
+        --i;
+    }
+    TEST(i == (size_t)-1);
+    array_iterator_destroy(it);
+
+    i = ARRAY_SIZE(t) - 1;
+    FOR_EACH_NODE_REV(it, a, Array, node)
+    {
+        TEST(*node == t[i]);
+        --i;
+    }
+    TEST(i == (size_t)-1);
+    array_iterator_destroy(it);
+
+    i = ARRAY_SIZE(t) - 1;
+    FOR_EACH_DATA_REV(it, a, Array, val)
+    {
+        TEST(val == t[i]);
+        --i;
+    }
+    TEST(i == (size_t)-1);
+    array_iterator_destroy(it);
+
+    array_destroy(a);
+    printf("\n");
+}
+
 void demo_kiss(void)
 {
     printf("KISS demo\n");
@@ -238,6 +315,7 @@ int main(void)
     demo_polymorphism();
     demo_singleton();
     demo_object_alloca();
+    demo_iterators();
     demo_kiss();
 
     return 0;
