@@ -15,6 +15,6 @@ void object_private_deinit(Object_private* objectp);
 size_t object_private_get_size(const Object_private* objectp);
 void* object_private_get_object(const Object_private* objectp);
 
-
+size_t object_private_sizeof(size_t object_size);
 
 #endif

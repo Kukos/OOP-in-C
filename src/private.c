@@ -12,9 +12,6 @@ struct Object_private
 
 void object_private_init(Object_private* objectp, const void* object, size_t size)
 {
-    if (objectp->size < size)
-        return;
-
     memcpy(objectp->object, object, size);
     objectp->size = size;
 }
@@ -49,4 +46,9 @@ void* object_private_get_object(const Object_private* objectp)
 {
     Object_private* ptr = (Object_private *)(uintptr_t)objectp; /* to remove const */
     return objectp == NULL ? NULL : &ptr->object[0];
+}
+
+size_t object_private_sizeof(size_t object_size)
+{
+    return sizeof(Object_private) + object_size;
 }

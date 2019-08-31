@@ -3,6 +3,7 @@
 #include <interface.h>
 #include <polymorphism.h>
 #include <singleton.h>
+#include <object_alloca.h>
 
 #include <stdio.h>
 
@@ -11,6 +12,7 @@ void demo_private(void);
 void demo_interface(void);
 void demo_polymorphism(void);
 void demo_singleton(void);
+void demo_object_alloca(void);
 
 void demo_public(void)
 {
@@ -146,6 +148,27 @@ void demo_singleton(void)
     printf("\n");
 }
 
+void demo_object_alloca(void)
+{
+    printf("Demo object alloca\n");
+
+    /* Private object cannot be alloc on stack, due forward declaration and placeholder,
+       But OBJECT_ALLOCA works as well
+    */
+
+    Object_private* objectp;
+    int data = 41;
+
+    OBJECT_ALLOCA(objectp, object_private_sizeof(sizeof(data)));
+
+    object_private_init(objectp, &data, sizeof(data));
+    printf("StackObject->size=%zu,data=%d\n", object_private_get_size(objectp), *(int *)object_private_get_object(objectp));
+
+    object_private_deinit(objectp);
+
+    printf("\n");
+}
+
 int main(void)
 {
     demo_public();
@@ -153,6 +176,7 @@ int main(void)
     demo_interface();
     demo_polymorphism();
     demo_singleton();
+    demo_object_alloca();
 
     return 0;
 }
