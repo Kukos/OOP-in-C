@@ -4,8 +4,30 @@
 #include <polymorphism.h>
 #include <singleton.h>
 #include <object_alloca.h>
+#include <kiss.h>
 
 #include <stdio.h>
+
+#define COLOR_RESET  "\033[0m"
+#define COLOR_RED    "\033[31m"
+#define COLOR_GREEN  "\033[32m"
+
+#define TO_STRING(x) _TO_STRING(x)
+#define _TO_STRING(x) (#x)
+
+#define ARRAY_SIZE(arr) sizeof(arr) / sizeof(arr[0])
+
+#define TEST(expr) \
+    do { \
+        if (expr) \
+        { \
+            fprintf(stderr, COLOR_GREEN "PASSED:"  COLOR_RESET "%s\n", TO_STRING(expr)); \
+        } \
+        else \
+        { \
+            fprintf(stderr, COLOR_RED "FAILED:" COLOR_RESET "%s\n", TO_STRING(expr)); \
+        } \
+    } while (0)
 
 void demo_public(void);
 void demo_private(void);
@@ -13,6 +35,7 @@ void demo_interface(void);
 void demo_polymorphism(void);
 void demo_singleton(void);
 void demo_object_alloca(void);
+void demo_kiss(void);
 
 void demo_public(void)
 {
@@ -169,6 +192,44 @@ void demo_object_alloca(void)
     printf("\n");
 }
 
+void demo_kiss(void)
+{
+    printf("KISS demo\n");
+
+    TEST(my_strlen("Kukos") == 5);
+    TEST(my_strlen("") == 0);
+
+    int t[] = {1, 9, 2, 8, 3, 7, 4, 6, 5};
+
+    TEST(find_key(t, ARRAY_SIZE(t), 1) == 0);
+    TEST(find_key(t, ARRAY_SIZE(t), 0) == -1);
+    TEST(find_key(t, ARRAY_SIZE(t), 5) == 8);
+    TEST(find_key(t, ARRAY_SIZE(t), 8) == 3);
+
+    TEST(is_power2(0) == false);
+    TEST(is_power2(1) == true);
+    TEST(is_power2(2) == true);
+    TEST(is_power2(7) == false);
+    TEST(is_power2(1024) == true);
+    TEST(is_power2(2047) == false);
+    TEST(is_power2(1U << 31U) == true);
+
+    TEST(allign_to_power2(0) == 1);
+    TEST(allign_to_power2(1) == 1);
+    TEST(allign_to_power2(14) == 16);
+    TEST(allign_to_power2(2047) == 2048);
+
+    int t1[] = {1, 9, 2, 8, 3, 7, 4, 6, 5};
+    int t2[] = {1, 1, 1, 1, 1};
+    int t3[] = {1, 9, 9, 8, 3, 7, 4, 6, 5};
+
+    TEST(max3(t1, ARRAY_SIZE(t1)) == 7);
+    TEST(max3(t2, ARRAY_SIZE(t2)) == 1);
+    TEST(max3(t3, ARRAY_SIZE(t3)) == 8);
+
+    printf("\n");
+}
+
 int main(void)
 {
     demo_public();
@@ -177,6 +238,7 @@ int main(void)
     demo_polymorphism();
     demo_singleton();
     demo_object_alloca();
+    demo_kiss();
 
     return 0;
 }
