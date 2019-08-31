@@ -2,6 +2,7 @@
 #include <private.h>
 #include <interface.h>
 #include <polymorphism.h>
+#include <singleton.h>
 
 #include <stdio.h>
 
@@ -9,6 +10,7 @@ void demo_public(void);
 void demo_private(void);
 void demo_interface(void);
 void demo_polymorphism(void);
+void demo_singleton(void);
 
 void demo_public(void)
 {
@@ -129,12 +131,28 @@ void demo_polymorphism(void)
     printf("\n");
 }
 
+void demo_singleton(void)
+{
+    printf("Demo Singleton\n");
+
+    printf("Setting int to 10\n");
+    class_int_set(10);
+    printf("Int = %d\n", class_int_get());
+
+    printf("Setting double to 3.14\n");
+    class_double_set(3.14);
+    printf("Double = %lf\n", class_double_get());
+
+    printf("\n");
+}
+
 int main(void)
 {
     demo_public();
     demo_private();
     demo_interface();
     demo_polymorphism();
+    demo_singleton();
 
     return 0;
 }
